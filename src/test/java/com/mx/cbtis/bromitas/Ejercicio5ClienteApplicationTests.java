@@ -2,18 +2,25 @@ package com.mx.cbtis.bromitas;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Field;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.web.client.RestTemplate;
 
 import com.mx.cbtis.controller.GestorController;
 import com.mx.cbtis.modelo.Comentarios;
@@ -27,14 +34,25 @@ class Ejercicio5ClienteApplicationTests {
     @Autowired
     private GestorController gestorController;
 
+    private RestTemplate mockRestTemplate;
+
+    @BeforeEach
+    void setUp() {
+        mockRestTemplate = mock(RestTemplate.class);
+    }
+
     @Test
-    void testVistasEstaticas() {
-        assertNotNull(gestorController);
+    void contextLoads() {
+        assertNotNull(gestorController, "El controlador GestorController debe cargarse correctamente");
+    }
+
+    @Test
+    void testVistasEstaticasYModelos() {
         assertEquals("home", gestorController.getHome());
         assertEquals("tutorial", gestorController.getTutorial());
         assertEquals("manual", gestorController.getManual());
         assertEquals("login", gestorController.getLogin());
-        
+
         Model model = new ExtendedModelMap();
         assertEquals("register", gestorController.getRegister(model));
         assertNotNull(model.getAttribute("usuario"));
@@ -49,10 +67,13 @@ class Ejercicio5ClienteApplicationTests {
     }
 
     @Test
-    void testMetodosClienteConCatch() {
-        // Ejecuta todos los métodos restantes de GestorController atrapando las llamadas remotas
+    void testEndpointsSegurosConFallback() {
+        Usuario usuario = new Usuario();
+        usuario.setCorreo_electronico("test@correo.com");
+        usuario.setContrasena("1234");
+
         try {
-            gestorController.setSaveUsuario(new Usuario());
+            gestorController.setSaveUsuario(usuario);
         } catch (Exception ignored) {}
 
         try {
@@ -72,7 +93,7 @@ class Ejercicio5ClienteApplicationTests {
         } catch (Exception ignored) {}
 
         try {
-            gestorController.verificarUsuario(new Usuario());
+            gestorController.verificarUsuario(usuario);
         } catch (Exception ignored) {}
 
         try {
