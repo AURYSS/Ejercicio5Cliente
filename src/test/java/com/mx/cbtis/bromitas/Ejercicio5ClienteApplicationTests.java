@@ -10,6 +10,10 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import com.mx.cbtis.controller.GestorController;
+import com.mx.cbtis.modelo.Comentarios;
+import com.mx.cbtis.modelo.Proyectos;
+import com.mx.cbtis.modelo.Tareas;
+import com.mx.cbtis.modelo.Usuario;
 
 @SpringBootTest
 class Ejercicio5ClienteApplicationTests {
@@ -36,5 +40,9 @@ class Ejercicio5ClienteApplicationTests {
         Model modelInicio = new ExtendedModelMap();
         assertEquals("inicio", gestorController.getInicio(modelInicio));
         assertNotNull(modelInicio.getAttribute("proyectos"));
+
+        Model modelTarea = new ExtendedModelMap();
+        assertEquals("proyecto", gestorController.getTarea(modelTarea));
+        assertNotNull(modelTarea.getAttribute("tareas"));
     }
 }
