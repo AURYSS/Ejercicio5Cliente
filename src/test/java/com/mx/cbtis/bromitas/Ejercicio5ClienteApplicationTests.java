@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 
 import com.mx.cbtis.controller.GestorController;
 
@@ -26,6 +28,13 @@ class Ejercicio5ClienteApplicationTests {
         assertEquals("tutorial", gestorController.getTutorial());
         assertEquals("manual", gestorController.getManual());
         assertEquals("login", gestorController.getLogin());
-        assertEquals("register", gestorController.getRegister());
+        
+        Model model = new ExtendedModelMap();
+        assertEquals("register", gestorController.getRegister(model));
+        assertNotNull(model.getAttribute("usuario"));
+
+        Model modelInicio = new ExtendedModelMap();
+        assertEquals("inicio", gestorController.getInicio(modelInicio));
+        assertNotNull(modelInicio.getAttribute("proyectos"));
     }
 }
